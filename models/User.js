@@ -27,6 +27,10 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  confirmed: {
+    type: Boolean,
+    defaultValue: false,
+  },
   createdOrganizations: [
     {
       type: Schema.Types.ObjectId,

@@ -86,6 +86,20 @@ const server = new ApolloServer({
     },
   },
 });
+const _User=require("./models/User");
+app.get('/confirmation/:token', async (req, res) => {
+  try {
+    console.log(req.params.token);
+    const user = jwt.verify(req.params.token, process.env.EMAIL_SECRET);
+    console.log(user.user);
+    //console.log(email);
+    await _User.updateOne({"email": user.user},{$set:{"confirmed":true}});
+  } catch (e) {
+    res.send('error');
+  }
+
+  return res.send("saved");//.redirect('http://localhost:3001/login');
+});
 
 app.use(apiLimiter); //safety against DOS attack
 
