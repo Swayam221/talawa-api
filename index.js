@@ -32,6 +32,8 @@ const xss = require('xss-clean');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 
+const _User=require("./models/User");
+
 const apiLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 50000,
@@ -67,6 +69,20 @@ app.use('/images', express.static(path.join(__dirname, './images')));
 app.get('/', (req, res) =>
   res.json({ 'talawa-version': 'v1', status: 'healthy' })
 );
+
+app.get('/confirmation/:token', async (req, res) => {
+  try {
+    console.log(req.params.token);
+    const user = jwt.verify(req.params.token, process.env.EMAIL_SECRET);
+    console.log(user.user);
+    //console.log(email);
+    await _User.updateOne({"email": user.user},{$set:{"confirmed":true}});
+  } catch (e) {
+    res.send('error');
+  }
+
+  return res.send("saved");//.redirect('http://localhost:3001/login');
+});
 
 const httpServer = http.createServer(app);
 

@@ -11,6 +11,10 @@ module.exports = async (parent, args) => {
     throw new Error('Invalid Credentials');
   }
 
+  if(!user.confirmed){
+    throw new Error("Please confirm your email");
+  }
+
   const isEqual = await bcrypt.compare(args.data.password, user._doc.password);
 
   if (!isEqual) {
